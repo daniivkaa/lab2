@@ -7,10 +7,10 @@ class AccountController
 	
 	public function actionLogin(){
 		if(Session::get('user')){
-			
+			header("Location: user");
 		}
 		else if(Session::get('admin')){
-			
+			header("Location: admin");
 		}
 		$message = Account::login();
 		
@@ -21,10 +21,10 @@ class AccountController
 	
 	public function actionRegister(){
 		if(Session::get('user')){
-			
+			header("Location: user");
 		}
 		else if(Session::get('admin')){
-			
+			header("Location: admin");
 		}
 		$message = Account::register();
 		

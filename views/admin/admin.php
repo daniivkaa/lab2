@@ -1,21 +1,4 @@
-<!DOCTYPE html>
-<html lang = "ru">
-	<head>
-		<meta charset = "utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Document</title>
-		<!-- CSS only -->
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-	</head>
-	<body>
-		<div class = "container-xxl text-center">
-			<nav class="navbar navbar-dark bg-dark" style = "background: #f7ecdc;">
-			  <a class="navbar-brand" href="<?php echo MVC_uri; ?>/admin">Модератор: <?php echo $name; ?></a>
-			  <span class="navbar-text">
-				  <a class="navbar-brand" href="<?php echo MVC_uri; ?>/admin/logout">Выход</a>
-			  </span>
-			</nav>
-		</div>
+<?php include(ROOT . '/views/admin/header.php'); ?>
 		<div class = "container-xxl text-center">
 			<h1 style = "margin-bottom: 20px;">Все конференции</h1>
 			<h2 style = "margin-bottom: 50px;">На проверке</h2>
@@ -78,5 +61,4 @@
 			
 		<!-- JavaScript Bundle with Popper -->
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
-	</body>
-</html>
+<?php include(ROOT . '/views/admin/footer.php'); ?>

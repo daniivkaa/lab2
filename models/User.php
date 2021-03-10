@@ -60,6 +60,9 @@ class User
 	
 	public static function createApplication()
 	{
+		$arr1 = array('doc', 'docx', 'pdf');
+		$arr2 = array('ppt', 'pptx', 'pdf');
+		
 		$message = "";
 		
 		if(isset($_POST['name'])){
@@ -68,76 +71,74 @@ class User
 			$short_content = $_POST['short_content'];
 			$info_autor = $_POST['info_autor'];
 			
-			if(mb_strlen($name) > 4){
-				if(mb_strlen($short_content) > 5){
-					if(mb_strlen($info_autor) > 4){
-						$extension1 = pathinfo($_FILES["file1"]["name"], PATHINFO_EXTENSION);
-						$extension2 = pathinfo($_FILES["file2"]["name"], PATHINFO_EXTENSION);
-						$arr1 = array('doc', 'docx', 'pdf');
-						$arr2 = array('ppt', 'pptx', 'pdf');
-						if(in_array($extension1, $arr1) && in_array($extension2, $arr2)){
-							if($_FILES["file1"]["size"] < 10000000 && $_FILES["file2"]["size"] < 30000000){
-								$db = Db::getConnection();
+			if(mb_strlen($name) < 4){
+				$message = "Название доклада слишком короткое";
+				return $message;
+			}
+			
+			if(mb_strlen($short_content) < 5){
+				$message = "Краткое описание доклада слишком короткое";
+				return $message;
+			}
+			
+			if(mb_strlen($info_autor) < 4){
+				$message = "Расскажите о себе чуть побольше";
+				return $message;
+			}
+			
+			$extension1 = pathinfo($_FILES["file1"]["name"], PATHINFO_EXTENSION);
+			$extension2 = pathinfo($_FILES["file2"]["name"], PATHINFO_EXTENSION);
+			
+			if((in_array($extension1, $arr1) && in_array($extension2, $arr2)) == false){
+				$message = "Не верное расширение файлов";
+				return $message;
+			}
+						
+			if($_FILES["file1"]["size"] > 10000000 && $_FILES["file2"]["size"] > 30000000){
+				$message = "Превышен размер файлов";
+				return $message;
+			}
+			$db = Db::getConnection();
 								
-								$email = Session::get('user');
+			$email = Session::get('user');
 								
-								$result = $db->query("SELECT name FROM users WHERE email='$email'");
-								$name_autor = $result->fetch()['name'];
+			$result = $db->query("SELECT name FROM users WHERE email='$email'");
+			$name_autor = $result->fetch()['name'];
 								
-								$tmp_name1 = $_FILES["file1"]["tmp_name"];
-								$name1 = 'uploads/1' . time() . '.' . $extension1;
-								$tmp_name2 = $_FILES["file2"]["tmp_name"];
-								$name2 = 'uploads/2' . time() . '.' . $extension2;
-								$type1 = $_FILES["file1"]["type"];
-								$type2 = $_FILES["file2"]["type"];
+			$tmp_name1 = $_FILES["file1"]["tmp_name"];
+			$name1 = 'uploads/1' . time() . '.' . $extension1;
+			$tmp_name2 = $_FILES["file2"]["tmp_name"];
+			$name2 = 'uploads/2' . time() . '.' . $extension2;
+			$type1 = $_FILES["file1"]["type"];
+			$type2 = $_FILES["file2"]["type"];
 								
-								move_uploaded_file($tmp_name1, $name1);
-								move_uploaded_file($tmp_name2, $name2);
+			move_uploaded_file($tmp_name1, $name1);
+			move_uploaded_file($tmp_name2, $name2);
 								
-								$arr = [
-									'name'		=>	$name,
-									'info_autor'	=>	$info_autor,
-									'topic'	=>	$topic,
-									'short_content'	=>	$short_content,
-									'autor'	=>	$name_autor,
-									'email'	=>	$email,
-									'file1'	=>	$name1,
-									'file2'	=>	$name2,
-									'type1'	=>	$type1,
-									'type2'	=>	$type2
-								];
+			$arr = [
+				'name'			=>	$name,
+				'info_autor'	=>	$info_autor,
+				'topic'			=>	$topic,
+				'short_content'	=>	$short_content,
+				'autor'			=>	$name_autor,
+				'email'			=>	$email,
+				'file1'			=>	$name1,
+				'file2'			=>	$name2,
+				'type1'			=>	$type1,
+				'type2'			=>	$type2
+			];
 								
 								
-								$result = $db->prepare("INSERT INTO application (name, info_autor, topic, short_content, autor, email, status, file1, file2, type1, type2) VALUES (:name, :info_autor, :topic, :short_content, :autor, :email, 'Проверяется', :file1, :file2, :type1, :type2)");
-								$result->execute($arr);
-								$resultId = $db->query("SELECT LAST_INSERT_ID();");
-								$rowId = $resultId->fetch();
-								$lastId = $rowId[0];
-								if($result){
-									header("Location: application/$lastId");
-								}
-								else{
-									$message = "Неизвестная ошибка";
-								}
-							}
-							else{
-								$message = "Превышен размер файлов";
-							}
-						}
-						else{
-							$message = "Не верное расширение файлов";
-						}
-					}
-					else{
-						$message = "Расскажите о себе чуть побольше";
-					}
-				}
-				else{
-					$message = "Краткое описание доклада слишком короткое";
-				}
+			$result = $db->prepare("INSERT INTO application (name, info_autor, topic, short_content, autor, email, status, file1, file2, type1, type2) VALUES (:name, :info_autor, :topic, :short_content, :autor, :email, 'Проверяется', :file1, :file2, :type1, :type2)");
+			$result->execute($arr);
+			$resultId = $db->query("SELECT LAST_INSERT_ID();");
+			$rowId = $resultId->fetch();
+			$lastId = $rowId[0];
+			if($result){
+				header("Location: application/$lastId");
 			}
 			else{
-				$message = "Название доклада слишком короткое";
+				$message = "Неизвестная ошибка";
 			}
 		}
 		
